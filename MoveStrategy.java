@@ -8,5 +8,5 @@ public abstract class MoveStrategy{
 	public MoveStrategy(){
 	}
 
-	public abstract void move();
+	public abstract void move(Pond pond);
 }

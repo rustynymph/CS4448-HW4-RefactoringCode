@@ -1,13 +1,12 @@
 class HungryBigFishStrategy extends MoveStrategy{
 
-	public HungryBigFishStrategy(Fish fish, double x, double y, Pond pond){
+	public HungryBigFishStrategy(Fish fish, double x, double y){
 		this.fish = fish;
 		this.x = x;
 		this.y = y;
-		this.pond = pond;
 	}
 	
-	public void move(){
+	public void move(Pond pond){
 		this.fish.swimRandomly();
 	}
 }

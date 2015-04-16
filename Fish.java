@@ -28,6 +28,7 @@ public class Fish extends Observable{
   private double x;                 // Where the fish is
   private double y;
   private int id; 
+  private MoveStrategy moveStrategy;
 
   // Don't want to be able to directly query the fish for information, but do 
   // need to get information for logging or displaying on a GUI, etc.
@@ -38,6 +39,9 @@ public class Fish extends Observable{
     // A fish is born!
     hunger = INIT_HUNGER;
     size = INIT_SIZE;
+
+    //a fish is full when initalized
+    moveStrategy = new FullFishStrategy(this,x,y);
 
     // Put it in the pond
     this.x = x;
@@ -76,55 +80,14 @@ public class Fish extends Observable{
     // has been consumed
     hunger = hunger * Math.exp(-deltaSize/size);
 
+    updateMoveStrategy(hunger,size);
     setChanged();
     notifyObservers(createFishAttributesArray());  
   }
 
   public void move(Pond pond)
   {
-    // Fish movement involves either seeking out food, avoiding other
-    // fish, or being lazy and just swimming around if big enough
-
-    MoveStrategy moveStrategy;
-
-    // If fish is STARVING_FISH, ignore possible preditors
-    if(hunger < STARVING_FISH)              
-    {
-      if(size < SMALL_FISH)
-      {
-        // Smaller fish only eat plants
-        moveStrategy = new StarvingSmallFishStrategy(this,x,y,pond);
-      }
-      else
-      {
-        // Really big fish like to eat other fish
-        moveStrategy = new StarvingBigFishStrategy(this,x,y,pond);
-      }
-    }
-    else 
-    { 
-      // Fish isn't starving, but is hungry
-      if (hunger < HUNGRY_FISH)
-      {
-        // A big enough fish won't worry about being eaten
-        if (size > BIG_FISH)
-        {
-          moveStrategy = new HungryBigFishStrategy(this,x,y,pond);
-        }
-        else
-        {
-          // Want to avoid the nearest big fish
-          moveStrategy = new HungrySmallFishStrategy(this,x,y,pond);
-        }
-      }
-      else
-      {
-        // A really full fish will just hide and sleep
-        moveStrategy = new FullFishStrategy(this,x,y,pond);
-
-      }
-    }
-    moveStrategy.move();
+    moveStrategy.move(pond);
   }
 
   // Swim towards a location
@@ -168,4 +131,45 @@ public class Fish extends Observable{
   {
     System.out.println("FISH #" + id + ": I'm hiding!");
   }
+
+  public void updateMoveStrategy(double hunger, double size){
+    if(hunger < STARVING_FISH)              
+    {
+      if(size < SMALL_FISH)
+      {
+        // Smaller fish only eat plants
+        moveStrategy = new StarvingSmallFishStrategy(this,x,y);
+      }
+      else
+      {
+        // Really big fish like to eat other fish
+        moveStrategy = new StarvingBigFishStrategy(this,x,y);
+      }
+    }
+    else 
+    { 
+      // Fish isn't starving, but is hungry
+      if (hunger < HUNGRY_FISH)
+      {
+        // A big enough fish won't worry about being eaten
+        if (size > BIG_FISH)
+        {
+          moveStrategy = new HungryBigFishStrategy(this,x,y);
+        }
+        else
+        {
+          // Want to avoid the nearest big fish
+          moveStrategy = new HungrySmallFishStrategy(this,x,y);
+        }
+      }
+      else
+      {
+        // A really full fish will just hide and sleep
+        moveStrategy = new FullFishStrategy(this,x,y);
+
+      }
+    }
+
+  }
+
 }
