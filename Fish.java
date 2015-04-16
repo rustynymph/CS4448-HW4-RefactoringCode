@@ -41,7 +41,7 @@ public class Fish extends Observable{
     size = INIT_SIZE;
 
     //a fish is full when initalized
-    moveStrategy = new FullFishStrategy(this,x,y);
+    updateMoveStrategy();
 
     // Put it in the pond
     this.x = x;
