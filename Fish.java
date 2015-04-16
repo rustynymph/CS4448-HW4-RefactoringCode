@@ -80,7 +80,7 @@ public class Fish extends Observable{
     // has been consumed
     hunger = hunger * Math.exp(-deltaSize/size);
 
-    updateMoveStrategy(hunger,size);
+    updateMoveStrategy();
     setChanged();
     notifyObservers(createFishAttributesArray());  
   }
@@ -132,7 +132,7 @@ public class Fish extends Observable{
     System.out.println("FISH #" + id + ": I'm hiding!");
   }
 
-  public void updateMoveStrategy(double hunger, double size){
+  public void updateMoveStrategy(){
     if(hunger < STARVING_FISH)              
     {
       if(size < SMALL_FISH)
