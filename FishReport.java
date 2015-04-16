@@ -4,10 +4,9 @@
 * An object individual fish update whenever their status changes
 */
 import java.util.Observer;
+import java.util.Observable;
 
-public class FishReport{
-  //implements Observer
-//{
+public class FishReport implements Observer{
   private Fish fish; 
   private double hunger;
   private double size;
@@ -21,12 +20,6 @@ public class FishReport{
     x = 0;
     y = 0;
   }
-
-  //@Override
-  //public void update(Observable o, Object arg){
-   // fish = (Fish)o;
-    //fish.updateHunger(o.)
-
  
   public void updateHunger(double hunger)
   {
@@ -59,4 +52,13 @@ public class FishReport{
     double location[] = {x, y};
     return location;
   }
+
+  @Override
+  public void update(Observable o, Object args) {
+    double[] fishAttributes = (double[]) args;
+    updateHunger(fishAttributes[0]);
+    updateSize(fishAttributes[1]);
+    updateLocation(fishAttributes[2], fishAttributes[3]);
+  }
+  
 }

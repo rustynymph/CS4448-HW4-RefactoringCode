@@ -8,9 +8,8 @@ import java.lang.Math;
 import java.util.Random;
 import java.util.Observable;
 
-public class Fish{
-  //implements Observable
-//{
+public class Fish extends Observable{
+
 
   public static final double STARVING_FISH = 0.2;
   public static final double HUNGRY_FISH = 0.7;
@@ -32,10 +31,10 @@ public class Fish{
 
   // Don't want to be able to directly query the fish for information, but do 
   // need to get information for logging or displaying on a GUI, etc.
-  private FishReport myFishReport = null;
-
+  
   public Fish(double x, double y, FishReport report)
   {
+
     // A fish is born!
     hunger = INIT_HUNGER;
     size = INIT_SIZE;
@@ -49,13 +48,16 @@ public class Fish{
     numberOfFish++;
 
     // Who to report to?
-    myFishReport = report;
-    if(myFishReport != null)
-    {
-      myFishReport.updateHunger(hunger);
-      myFishReport.updateSize(size);
-      myFishReport.updateLocation(x, y);
-    }
+    addObserver(report);
+    setChanged();
+    notifyObservers(createFishAttributesArray());
+  }
+
+  /* allows us to pass in an array of the fish's attributes for updating */
+  private double[] createFishAttributesArray()
+  {
+    double[] fishAttributesArray = {hunger,size,x,y};
+    return fishAttributesArray;
   }
 
   public double getSize()           
@@ -74,8 +76,8 @@ public class Fish{
     // has been consumed
     hunger = hunger * Math.exp(-deltaSize/size);
 
-    myFishReport.updateHunger(hunger);
-    myFishReport.updateSize(size);   
+    setChanged();
+    notifyObservers(createFishAttributesArray());  
   }
 
   public void move(Pond pond)
@@ -132,7 +134,8 @@ public class Fish{
     x = x + (tx/distance);
     y = y + (ty/distance);
 
-    myFishReport.updateLocation(x, y);
+    setChanged();
+    notifyObservers(createFishAttributesArray());
   }
 
 
@@ -143,7 +146,8 @@ public class Fish{
     x = x - (tx/distance);
     y = y - (ty/distance);
 
-    myFishReport.updateLocation(x, y);
+    setChanged();
+    notifyObservers(createFishAttributesArray());
   }
 
 
@@ -155,7 +159,8 @@ public class Fish{
     x = x + random.nextDouble();
     y = y + random.nextDouble();
 
-    myFishReport.updateLocation(x, y);
+    setChanged();
+    notifyObservers(createFishAttributesArray());
   }
 
   // Just let the world know I hid!
